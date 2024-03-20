@@ -12,7 +12,12 @@
     <form method="post" id="form">
         {% csrf_token %}
 
-        {{ form }}
+        {{ construction_form }}
+
+        <br>
+        {{ formset }}
+
+
         <input type="submit" value="Save">
     </form>
 {% endblock %}

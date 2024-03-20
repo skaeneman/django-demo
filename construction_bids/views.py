@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import ConstructionBid, Client
-from .forms import ConstructionBidForm
+from .forms import ConstructionBidForm, ClientForm
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from django.views.generic.edit import (
@@ -9,13 +9,21 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
+from django.forms import inlineformset_factory
+
+
 # Create your views here.
 
 class ConstructionBidClassCreateView(CreateView):
 
     template_name = 'index.html'
-    form_class = ConstructionBidForm
+    construction_form = ConstructionBidForm
+    # client_form = ClientForm    
     success_url = 'index-form-success/'
+
+    # client formset
+    ClientFormSet = inlineformset_factory(ConstructionBid, Client, fields='__all__', extra=1)
+    # PhoneFormSet = inlineformset_factory(Client, Phone, fields='__all__')
 
     ###########################################################
     # Get Method
@@ -24,13 +32,15 @@ class ConstructionBidClassCreateView(CreateView):
         '''
         GET Response Method
         '''
- 
+
         return TemplateResponse(request, self.template_name, { 
             'title': 'ModelFormClassCreateView Page',
             # 'page_id': 'model-form-class-id',
             # 'page_class': 'model-form-class-page',
             'h1_tag': 'This is the ModelFormClassCreateView Class Page Using ConstructionBidForm',
-            'form': self.form_class(),
+            'construction_form': self.construction_form(),
+            'formset': self.ClientFormSet,
+            # 'client_form': self.client_form(),
         })
 
     ###########################################################
@@ -41,19 +51,30 @@ class ConstructionBidClassCreateView(CreateView):
         POST Response Method
         '''
         #return redirect(self.success_url)
-        form = self.form_class(request.POST)
+        construction_form = self.construction_form(request.POST)
 
-        if form.is_valid():
-            bid_form = form.instance
+        # client formset, get the instance of the construction form
+        formset = self.ClientFormSet(request.POST, instance=construction_form.instance)
+
+        if construction_form.is_valid() and formset.is_valid():
+            construction_form = construction_form.instance
+
 
             # If you need to manipulate fields individually
-            # bid_form = ConstructionBid(
-            #   job_title = form.instance.job_title,
+            # construction_form = ConstructionBid(
+            #   job_title = construction_form.instance.job_title,
             #   job_type = form.instance.job_type,
             #   estimate = form.instance.estimate,
             # )
-            # bid_form.job_type = "TESTING"
-            # bid_form.save()
+            # construction_form.job_type = "TESTING"
+            # construction_form.save()
+
+
+            # Create, but don't save the bid instance.
+            # construction = construction_form.save(commit=False)
+            
+            construction_form.save()
+            formset.save()
 
             return HttpResponseRedirect(self.success_url)
         else:
@@ -63,7 +84,7 @@ class ConstructionBidClassCreateView(CreateView):
                 # 'page_class': 'model-form-class-page errors-found',
                 'h1_tag': 'This is the ModelFormClassCreateView Page Using ConstructionBidform<br />' \
                     '<small class="error-msg">Errors Found</small>',
-                'form': form,
+                'construction_form': construction_form,
             })
 
     def form_valid(self, form):
