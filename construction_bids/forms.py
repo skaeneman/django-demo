@@ -14,7 +14,12 @@ class TaskForm(ModelForm):
         fields = "__all__"    
  
 # client formset
-ClientFormSet = inlineformset_factory(ConstructionBid, Client, fields=("first_name","last_name",), extra=0, can_delete_extra=True)
+ClientFormSet = inlineformset_factory(ConstructionBid, 
+                                      Client, 
+                                      fields=("first_name","last_name",), 
+                                      extra=0, 
+                                      can_delete_extra=True,
+                                      max_num=3,)
 
 #task formset
 TaskFormSet = inlineformset_factory(ConstructionBid, Task, form=TaskForm, extra=1, can_delete_extra=True)

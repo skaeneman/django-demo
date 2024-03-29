@@ -22,9 +22,9 @@
 // }
 
 const addMoreBtn = document.getElementById('add-more');
-const totalNewForms = document.getElementById('id_form-TOTAL_FORMS');
+const totalNewForms = document.getElementById('id_client_set-TOTAL_FORMS');
 
-// count the number of classes with the name 'client-formset-container' so we can get the total number of forms
+// count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
 const currentClientForms = document.getElementsByClassName('client-formset-container');
 
 addMoreBtn.addEventListener('click', add_new_form);
@@ -36,12 +36,13 @@ function add_new_form(event) {
   }
 
   // increment the total number of forms
-  const currentFormCount = currentClientForms.length //+ 1;
+  const currentFormCount = currentClientForms.length;
   console.log(currentFormCount);
 
-  // where form will be copied to
+  // where the new form will be copied to
   const formCopyTarget = document.getElementById('client-list');
-  // make a copy of the original empty form
+
+  // make a copy of the original empty form and set the class and unique id
   const copyEmptyformElement = document.getElementById('empty-form').cloneNode(true);
   copyEmptyformElement.setAttribute('class', 'client-formset-container');
   copyEmptyformElement.setAttribute('id', `client-form-${currentFormCount}`);
@@ -50,8 +51,8 @@ function add_new_form(event) {
   const regex = new RegExp(`__prefix__`, 'g');
   copyEmptyformElement.innerHTML = copyEmptyformElement.innerHTML.replace(regex, currentFormCount);
 
-  // TODO: FIX THIS 
-  // totalNewForms.setAttribute('value', currentFormCount + 1); // increment the number of total forms in the management form data
+  totalNewForms.setAttribute('value', currentFormCount + 1); // increment the number of total forms in the management form data
+  console.log("client form count: ", totalNewForms.getAttribute('value'));
 
   formCopyTarget.append(copyEmptyformElement); // add the copy to the end of the list
 }

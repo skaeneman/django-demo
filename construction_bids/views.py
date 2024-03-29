@@ -61,6 +61,8 @@ class ConstructionBidClassCreateView(CreateView):
         if construction_form.is_valid() and client_formset.is_valid() and task_formset.is_valid():
             construction_form = construction_form.instance
 
+            # print(client_formset)
+
             # If you need to manipulate fields individually
             # construction_form = ConstructionBid(
             #   job_title = construction_form.instance.job_title,
@@ -76,6 +78,11 @@ class ConstructionBidClassCreateView(CreateView):
             
             # Save the bid instance
             parent = construction_form.save()
+
+            # instances = client_formset.save(commit=False)
+            # for obj in client_formset.deleted_objects:
+            #   obj.delete()
+
 
             # loop through the formset and save each form
             for client_form in client_formset:
