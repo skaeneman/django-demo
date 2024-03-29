@@ -1,26 +1,74 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <body>
+  
+  {% block body_content %}
+  
+<style>
+  .hidden {
+      display: none;
+  }
+</style>
 
-{% block body_content %}
-    {% if h1_tag %}
-        <h1>{{ h1_tag|safe }}</h1>
-    {% else %}
-        <h1>Title Not Found</h1>
-    {% endif %}
+      <form method="post" id="form">
+          {% csrf_token %}
+  
+          {{ construction_form.as_p }}
+  
+          <!-- {% if task_formset %}
+              <h3>Tasks</h3>
+  
+              {{ task_formset.non_form_errors }}
+              {{ task_formset.management_form }}
+  
+              {% for form in task_formset %}
+                  <div class="formset-container2 {{ task_formset.prefix }}">
+                      <div class="name">{{ form.name.label }}: {{ form.name }}</div>  
+              {% endfor %}
+          {% endif %} -->
+          
+          <h3>Tasks</h3>
+          {{ task_formset.as_p }}
 
-    <form method="post" id="form">
-        {% csrf_token %}
 
-        {{ construction_form }}
+          {% if client_formset %}
+              <h3>Clients</h3>
+  
+              {{ client_formset.non_form_errors }}
+              {{ client_formset.management_form }}
 
-        <br>
-        {{ formset }}
+              <div id="client-list">
+                {% for form in client_formset %}
+                    <div class="client-formset-container {{ client_formset.prefix }}">
+                        <div class="first-name">{{ form.first_name.label }}: {{ form.first_name }}</div>
+                        <div class="last-name">{{ form.last_name.label }}: {{ form.last_name }}</div>
+    
+                        {% if client_formset.can_delete %}
+                            <div class="delete">{{ form.DELETE }} {{ form.DELETE.label }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+              </div>
 
+              <div id="empty-form" class="hidden">{{ client_formset.empty_form.as_p }}</div>
+              <buton id="add-more" type="button">Add More</button>
 
-        <input type="submit" value="Save">
-    </form>
-{% endblock %}
+          {% endif %}
+  
+          <button id="add-formset" type="button">Add Another</button>
+  
+          <input type="submit" value="Save">
+      </form>
+
+  {% endblock %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  
+  <script type="text/javascript" src="{% static 'js/site-js.js' %}"></script>
 
 </body>
 </html>
+
+
+
