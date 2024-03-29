@@ -12,56 +12,40 @@
   }
 </style>
 
-      <form method="post" id="form">
-          {% csrf_token %}
-  
-          {{ construction_form.as_p }}
-  
-          <!-- {% if task_formset %}
-              <h3>Tasks</h3>
-  
-              {{ task_formset.non_form_errors }}
-              {{ task_formset.management_form }}
-  
-              {% for form in task_formset %}
-                  <div class="formset-container2 {{ task_formset.prefix }}">
-                      <div class="name">{{ form.name.label }}: {{ form.name }}</div>  
-              {% endfor %}
-          {% endif %} -->
-          
-          <h3>Tasks</h3>
-          {{ task_formset.as_p }}
-
-
-          {% if client_formset %}
-              <h3>Clients</h3>
-  
-              {{ client_formset.non_form_errors }}
-              {{ client_formset.management_form }}
-
-              <div id="client-list">
-                {% for form in client_formset %}
-                    <div class="client-formset-container {{ client_formset.prefix }}">
-                        <div class="first-name">{{ form.first_name.label }}: {{ form.first_name }}</div>
-                        <div class="last-name">{{ form.last_name.label }}: {{ form.last_name }}</div>
+<form method="post" id="form">
+    {% csrf_token %}
     
-                        {% if client_formset.can_delete %}
-                            <div class="delete">{{ form.DELETE }} {{ form.DELETE.label }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-              </div>
-
-              <div id="empty-form" class="hidden">{{ client_formset.empty_form.as_p }}</div>
-              <buton id="add-more" type="button">Add More</button>
-
+    {{ construction_form.as_p }}
+    
+    <h3>Tasks</h3>
+    <div id="task-formset">
+      {{ task_formset.management_form }}
+      {% for form in task_formset %}
+        <div class="task-formset-container">
+          {{ form.as_p }}
+        </div>
+      {% endfor %}
+    </div>
+    <button id="add-task" type="button">Add Task</button>
+    
+    <h3>Clients</h3>
+    <div id="client-formset">
+      {{ client_formset.management_form }}
+      {% for form in client_formset %}
+        <div class="client-formset-container">
+          {{ form.as_p }}
+          {% if client_formset.can_delete %}
+            {{ form.DELETE }}
           {% endif %}
-  
-          <button id="add-formset" type="button">Add Another</button>
-  
-          <input type="submit" value="Save">
-      </form>
+        </div>
+      {% endfor %}
+    </div>
+    <button id="add-client" type="button">Add Client</button>
+    
+    <input type="submit" value="Save">
+  </form>
 
+ 
   {% endblock %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   
