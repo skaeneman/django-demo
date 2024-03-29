@@ -9,6 +9,7 @@ $(document).ready(function () {
     var newForm = formset
       .find("." + formsetContainer + "-container:first")
       .clone(true);
+    newForm.find(".errorlist").remove();
     newForm.find("input, select").each(function () {
       var prefix = modelPrefix + "-" + totalForms + "-";
       var reg = new RegExp(modelPrefix + "-\\d+-");
