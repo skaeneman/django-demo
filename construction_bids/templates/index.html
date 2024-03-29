@@ -26,8 +26,7 @@
       <div id="client-formset">
         {{ client_formset.management_form }} {% for form in client_formset %}
         <div class="client-formset-container">
-          {{ form.as_p }} {% if client_formset.can_delete %} {{ form.DELETE }}
-          {% endif %}
+          {{ form.as_p }} 
         </div>
         {% endfor %}
       </div>
