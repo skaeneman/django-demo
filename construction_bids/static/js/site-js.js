@@ -1,8 +1,11 @@
 // site-js.js
 $(document).ready(function () {
-  function addFormset(formsetContainer) {
+  function addFormset(formsetContainer, prefix) {
     var formset = $("#" + formsetContainer);
-    var totalForms = parseInt(formset.find('[name="form-TOTAL_FORMS"]').val());
+    var totalFormElName = prefix + "-TOTAL_FORMS";
+    var totalForms = parseInt(
+      formset.find("[name=" + totalFormElName + "]").val()
+    );
     var newForm = formset
       .find("." + formsetContainer + "-container:first")
       .clone(true);
@@ -15,14 +18,14 @@ $(document).ready(function () {
       $(this).val("");
     });
     newForm.appendTo(formset).removeClass("hidden");
-    formset.find('[name="form-TOTAL_FORMS"]').val(totalForms + 1);
+    formset.find("[name=" + totalFormElName + "]").val(totalForms + 1);
   }
 
   $("#add-task").click(function () {
-    addFormset("task-formset");
+    addFormset("task-formset", "tasks");
   });
 
   $("#add-client").click(function () {
-    addFormset("client-formset");
+    addFormset("client-formset", "clients");
   });
 });

@@ -2,57 +2,43 @@
 
 <!DOCTYPE html>
 <html>
-<body>
-  
-  {% block body_content %}
-  
-<style>
-  .hidden {
-      display: none;
-  }
-</style>
+  <body>
+    {% block body_content %}
 
-<form method="post" id="form">
-    {% csrf_token %}
-    
-    {{ construction_form.as_p }}
-    
-    <h3>Tasks</h3>
-    <div id="task-formset">
-      {{ task_formset.management_form }}
-      {% for form in task_formset %}
-        <div class="task-formset-container">
-          {{ form.as_p }}
-        </div>
-      {% endfor %}
-    </div>
-    <button id="add-task" type="button">Add Task</button>
-    
-    <h3>Clients</h3>
-    <div id="client-formset">
-      {{ client_formset.management_form }}
-      {% for form in client_formset %}
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+
+    <form method="post" id="form">
+      {% csrf_token %} {{ construction_form.as_p }}
+
+      <h3>Tasks</h3>
+      <div id="task-formset">
+        {{ task_formset.management_form }} {% for form in task_formset %}
+        <div class="task-formset-container">{{ form.as_p }}</div>
+        {% endfor %}
+      </div>
+      <button id="add-task" type="button">Add Task</button>
+
+      <h3>Clients</h3>
+      <div id="client-formset">
+        {{ client_formset.management_form }} {% for form in client_formset %}
         <div class="client-formset-container">
-          {{ form.as_p }}
-          {% if client_formset.can_delete %}
-            {{ form.DELETE }}
+          {{ form.as_p }} {% if client_formset.can_delete %} {{ form.DELETE }}
           {% endif %}
         </div>
-      {% endfor %}
-    </div>
-    <button id="add-client" type="button">Add Client</button>
-    
-    <input type="submit" value="Save">
-  </form>
+        {% endfor %}
+      </div>
+      <button id="add-client" type="button">Add Client</button>
 
- 
-  {% endblock %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  
-  <script type="text/javascript" src="{% static 'js/site-js.js' %}"></script>
+      <input type="submit" value="Save" />
+    </form>
 
-</body>
+    {% endblock %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="{% static 'js/site-js.js' %}"></script>
+  </body>
 </html>
-
-
-
