@@ -25,68 +25,58 @@
 
 $(document).ready(function () {
 
-  // // const addMoreBtn = document.getElementById('add-client');
-  // const totalNewForms = document.getElementById('id_client_set-TOTAL_FORMS');
+    /*
+    * Add a new form to the formset
+    * @param {string} formsetContainer - the CSS class name of the formset container
+    * @param {string} formsetList - the CSS id name of the formset list where the new form will be appended
+    * @param {string} emptyFormId - the CSS id name of the empty form that will be copied
+    * @param {string} formsetName - name used in the auto created django management_form data (e.g. id_client_set-TOTAL_FORMS).
+    *                               if id_client_set-TOTAL_FORMS is the management_form, then formsetName would just be 'client' 
+    */
+    function addNewFormset(formsetContainer, formsetList, emptyFormId, formsetName) {
+      const totalNewForms = document.getElementById('id_'+ formsetName +'_set-TOTAL_FORMS');
 
-  // // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
-  // const currentClientForms = document.getElementsByClassName('client-formset-container');
+      // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
+      const currentForms = document.getElementsByClassName(formsetContainer);    
+      
+      // if (event) {
+      //   // don't allow form to be submitted yet
+      //   event.preventDefault();
+      // }
+      
+      // increment the total number of forms
+      const currentFormCount = currentForms.length;
+      console.log(currentFormCount);
 
-  // addMoreBtn.addEventListener('click', add_new_form);
+      // where the new form will be appened to
+      const formCopyTarget = document.getElementById(formsetList);
 
+      // make a copy of the original empty form and set the class and unique id
+      const copyEmptyformElement = document.getElementById(emptyFormId).cloneNode(true);
+      copyEmptyformElement.setAttribute('class', formsetContainer);
 
-  // function addFormset(formsetContainer, modelPrefix) {
-    // const addMoreBtn = document.getElementById('add-client');
-    // const totalNewForms = document.getElementById('id_client_set-TOTAL_FORMS');
+      // set the unique id of the new form (e.g. client-form-1, client-form-2, etc.)
+      copyEmptyformElement.setAttribute('id', 'formsetName' + `-form-${currentFormCount}`);
 
-    // // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
-    // const currentClientForms = document.getElementsByClassName('client-formset-container');
+      // replace all instances of '__prefix__' with the current form count
+      const regex = new RegExp(`__prefix__`, 'g');
+      copyEmptyformElement.innerHTML = copyEmptyformElement.innerHTML.replace(regex, currentFormCount);
 
-    // addMoreBtn.addEventListener('click', add_new_form);
-  
-  function add_new_form(event) {
-    // const addMoreBtn = document.getElementById('add-client');
-    const totalNewForms = document.getElementById('id_client_set-TOTAL_FORMS');
+      // increment the number of total forms in the management form data
+      totalNewForms.setAttribute('value', currentFormCount + 1);
+      console.log("form count: ", totalNewForms.getAttribute('value'));
 
-    // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
-    const currentClientForms = document.getElementsByClassName('client-formset-container');    
-    
-    if (event) {
-      // don't allow form to be submitted yet
-      event.preventDefault();
+      // add the new copy to the end of the list
+      formCopyTarget.append(copyEmptyformElement);
     }
-    
-    // increment the total number of forms
-    const currentFormCount = currentClientForms.length;
-    console.log(currentFormCount);
 
-    // where the new form will be copied to
-    const formCopyTarget = document.getElementById('client-list');
+    // add a new form when the add button is clicked
+    $("#add-task").click(function () {
+      addNewFormset("task-formset-container", "task-list", "empty-task-form", "task")    
+    });
 
-    // make a copy of the original empty form and set the class and unique id
-    const copyEmptyformElement = document.getElementById('empty-form').cloneNode(true);
-    copyEmptyformElement.setAttribute('class', 'client-formset-container');
-    copyEmptyformElement.setAttribute('id', `client-form-${currentFormCount}`);
-
-    // replace all instances of '__prefix__' with the current form count
-    const regex = new RegExp(`__prefix__`, 'g');
-    copyEmptyformElement.innerHTML = copyEmptyformElement.innerHTML.replace(regex, currentFormCount);
-
-    totalNewForms.setAttribute('value', currentFormCount + 1); // increment the number of total forms in the management form data
-    console.log("client form count: ", totalNewForms.getAttribute('value'));
-
-    formCopyTarget.append(copyEmptyformElement); // add the copy to the end of the list
-  }
-
-
-  $("#add-task").click(function () {
-    // addFormset("task-formset", "tasks");
-    add_new_form()    
-  });
-
-  $("#add-client").click(function () {
-    // addFormset("client-formset", "clients");
-    add_new_form()    
-  });
-
+    $("#add-client").click(function () {
+      addNewFormset("client-formset-container", "client-list", "empty-client-form", "client")    
+    });
 
 });
