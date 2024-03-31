@@ -18,8 +18,7 @@ ClientFormSet = inlineformset_factory(ConstructionBid,
                                       Client, 
                                       fields=("first_name","last_name",), 
                                       extra=0, 
-                                      can_delete_extra=True,
-                                      max_num=3,)
+                                      can_delete_extra=True)
 
 #task formset
 TaskFormSet = inlineformset_factory(ConstructionBid, Task, form=TaskForm, extra=1, can_delete_extra=True)

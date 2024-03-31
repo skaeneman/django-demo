@@ -35,8 +35,9 @@ class ConstructionBidClassCreateView(CreateView):
             # 'page_class': 'model-form-class-page',
             'h1_tag': 'This is the ModelFormClassCreateView Class Page Using ConstructionBidForm',
             'construction_form': self.construction_form(),
-            'client_formset': ClientFormSet,
-            'task_formset': TaskFormSet,
+            'client_formset': ClientFormSet(prefix='client_set'),
+            'task_formset': TaskFormSet(prefix='task_set'),
+
             # 'phone_formset': PhoneFormSet,
             # 'client_form': self.client_form(),
         })

@@ -30,11 +30,14 @@ $(document).ready(function () {
     * @param {string} formsetContainer - the CSS class name of the formset container
     * @param {string} formsetList - the CSS id name of the formset list where the new form will be appended
     * @param {string} emptyFormId - the CSS id name of the empty form that will be copied
-    * @param {string} formsetName - name used in the auto created django management_form data (e.g. id_client_set-TOTAL_FORMS).
-    *                               if id_client_set-TOTAL_FORMS is the management_form, then formsetName would just be 'client' 
+    * @param {string} modelPrefix - name used in the auto created django management_form data (e.g. id_client_set-TOTAL_FORMS).
+    *                               if id_client_set-TOTAL_FORMS is the management_form, then modelPrefix would just be 'client_set' 
     */
-    function addNewFormset(formsetContainer, formsetList, emptyFormId, formsetName) {
-      const totalNewForms = document.getElementById('id_'+ formsetName +'_set-TOTAL_FORMS');
+    function addNewFormset(formsetContainer, formsetList, emptyFormId, modelPrefix) {
+      // remove '_set' from the modelPrefix so we can get the model name
+      modelName = modelPrefix.replace("_set", "");
+
+      const totalNewForms = document.getElementById('id_'+ modelName +'_set-TOTAL_FORMS');
 
       // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
       const currentForms = document.getElementsByClassName(formsetContainer);    
@@ -56,7 +59,7 @@ $(document).ready(function () {
       copyEmptyformElement.setAttribute('class', formsetContainer);
 
       // set the unique id of the new form (e.g. client-form-1, client-form-2, etc.)
-      copyEmptyformElement.setAttribute('id', 'formsetName' + `-form-${currentFormCount}`);
+      copyEmptyformElement.setAttribute('id', modelName + `-form-${currentFormCount}`);
 
       // replace all instances of '__prefix__' with the current form count
       const regex = new RegExp(`__prefix__`, 'g');
@@ -72,11 +75,11 @@ $(document).ready(function () {
 
     // add a new form when the add button is clicked
     $("#add-task").click(function () {
-      addNewFormset("task-formset-container", "task-list", "empty-task-form", "task")    
+      addNewFormset("task-formset-container", "task-list", "empty-task-form", "task_set")    
     });
 
     $("#add-client").click(function () {
-      addNewFormset("client-formset-container", "client-list", "empty-client-form", "client")    
+      addNewFormset("client-formset-container", "client-list", "empty-client-form", "client_set")    
     });
 
 });
