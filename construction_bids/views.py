@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import ConstructionBid, Client
 from .forms import ConstructionBidForm, ClientFormSet, TaskFormSet
 from django.contrib import messages
 from django.template.response import TemplateResponse
@@ -9,8 +8,6 @@ from django.views.generic.edit import (
     CreateView,
     UpdateView,
 )
-from django.forms import inlineformset_factory
-
 
 # Create your views here.
 
@@ -25,9 +22,12 @@ class ConstructionBidClassCreateView(CreateView):
     # Get Method
     ###########################################################
     def get(self, request, *args, **kwargs):
-        '''
+        ''' 
         GET Response Method
         '''
+
+        client_formset = ClientFormSet(prefix='client_set')
+        task_formset = TaskFormSet(prefix='task_set')
 
         return TemplateResponse(request, self.template_name, { 
             'title': 'ModelFormClassCreateView Page',
@@ -35,8 +35,8 @@ class ConstructionBidClassCreateView(CreateView):
             # 'page_class': 'model-form-class-page',
             'h1_tag': 'This is the ModelFormClassCreateView Class Page Using ConstructionBidForm',
             'construction_form': self.construction_form(),
-            'client_formset': ClientFormSet(prefix='client_set'),
-            'task_formset': TaskFormSet(prefix='task_set'),
+            'client_formset': client_formset,
+            'task_formset': task_formset,
 
             # 'phone_formset': PhoneFormSet,
             # 'client_form': self.client_form(),
@@ -46,25 +46,17 @@ class ConstructionBidClassCreateView(CreateView):
     # Post Method
     ###########################################################
     def post(self, request, *args, **kwargs):
-        '''
+        ''' 
         POST Response Method
         '''
-        #return redirect(self.success_url)
+
         construction_form = self.construction_form(request.POST)
-
-        # client formset, get the instance of the construction form
-        client_formset = ClientFormSet(request.POST, instance=construction_form.instance)
-
-        # task formset, get the instance of the construction form
-        task_formset = TaskFormSet(request.POST, instance=construction_form.instance)
-
+        client_formset = ClientFormSet(request.POST, prefix='client_set')
+        task_formset = TaskFormSet(request.POST, prefix='task_set')        
 
         if construction_form.is_valid() and client_formset.is_valid() and task_formset.is_valid():
-            construction_form = construction_form.instance
-
-            # print(client_formset)
-
-            # If you need to manipulate fields individually
+            # If you need to manipulate fields in the parent form before saving
+            # construction_form = construction_form.instance
             # construction_form = ConstructionBid(
             #   job_title = construction_form.instance.job_title,
             #   job_type = form.instance.job_type,
@@ -73,29 +65,19 @@ class ConstructionBidClassCreateView(CreateView):
             # construction_form.job_type = "TESTING"
             # construction_form.save()
 
+            construction_bid = construction_form.save()
 
-            # Create, but don't save the bid instance.
-            # construction = construction_form.save(commit=False)
-            
-            # Save the bid instance
-            parent = construction_form.save()
+            # iterate through each form in the formset and save it
+            client_instances = client_formset.save(commit=False)
+            for client_instance in client_instances:
+                client_instance.construction_bid = construction_bid
+                client_instance.save()
 
-            # instances = client_formset.save(commit=False)
-            # for obj in client_formset.deleted_objects:
-            #   obj.delete()
-
-
-            # loop through the formset and save each form
-            for client_form in client_formset:
-                client_form.construction_bid = parent
-                client_form.save()
-            
-            # loop through the formset and save each form
-            for task_form in task_formset:
-                task_form.construction_bid = parent
-                task_form.save() 
-
-
+            task_instances = task_formset.save(commit=False)
+            for task_instance in task_instances:
+                task_instance.client = construction_bid
+                task_instance.save()
+ 
             return HttpResponseRedirect(self.success_url)
         else:
             return TemplateResponse(request, self.template_name, {
@@ -105,6 +87,8 @@ class ConstructionBidClassCreateView(CreateView):
                 'h1_tag': 'This is the ModelFormClassCreateView Page Using ConstructionBidform<br />' \
                     '<small class="error-msg">Errors Found</small>',
                 'construction_form': construction_form,
+                'client_formset': client_formset,
+                'task_formset': task_formset,                
             })
 
     def form_valid(self, form):

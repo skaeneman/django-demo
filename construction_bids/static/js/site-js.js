@@ -34,12 +34,15 @@ $(document).ready(function () {
     *                               if id_client_set-TOTAL_FORMS is the management_form, then modelPrefix would just be 'client_set' 
     */
     function addNewFormset(formsetContainer, formsetList, emptyFormId, modelPrefix) {
-      // remove '_set' from the modelPrefix so we can get the model name
-      modelName = modelPrefix.replace("_set", "");
+      // remove '_set' from the modelPrefix so we can get the model name (e.g. client_set -> client)
+      let modelName = modelPrefix;
+      if (modelName.includes("_set")) {
+        modelName = modelName.replace("_set", "");
+      }
 
       const totalNewForms = document.getElementById('id_'+ modelName +'_set-TOTAL_FORMS');
 
-      // count the number of classes with the name 'client-formset-container' so we can get the total number of forms on the page
+      // count the number of classes named '<something>-formset-container' so we can get the total number of forms on the page
       const currentForms = document.getElementsByClassName(formsetContainer);    
       
       // if (event) {
@@ -47,14 +50,14 @@ $(document).ready(function () {
       //   event.preventDefault();
       // }
       
-      // increment the total number of forms
+      // get the number of forms on the page
       const currentFormCount = currentForms.length;
       console.log(currentFormCount);
 
       // where the new form will be appened to
       const formCopyTarget = document.getElementById(formsetList);
 
-      // make a copy of the original empty form and set the class and unique id
+      // make a copy of the original empty form and set its class and unique id
       const copyEmptyformElement = document.getElementById(emptyFormId).cloneNode(true);
       copyEmptyformElement.setAttribute('class', formsetContainer);
 
@@ -65,9 +68,9 @@ $(document).ready(function () {
       const regex = new RegExp(`__prefix__`, 'g');
       copyEmptyformElement.innerHTML = copyEmptyformElement.innerHTML.replace(regex, currentFormCount);
 
-      // increment the number of total forms in the management form data
+      // increment the number of total forms in the management_form data
       totalNewForms.setAttribute('value', currentFormCount + 1);
-      console.log("form count: ", totalNewForms.getAttribute('value'));
+      console.log(modelPrefix + "count: ", totalNewForms.getAttribute('value'));
 
       // add the new copy to the end of the list
       formCopyTarget.append(copyEmptyformElement);

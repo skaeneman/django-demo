@@ -17,20 +17,6 @@
   
           {{ construction_form.as_p }}
   
-          <!-- {% if task_formset %}
-              <h3>Tasks</h3>
-  
-              {{ task_formset.non_form_errors }}
-              {{ task_formset.management_form }}
-  
-              {% for form in task_formset %}
-                  <div class="formset-container2 {{ task_formset.prefix }}">
-                      <div class="name">{{ form.name.label }}: {{ form.name }}</div>  
-              {% endfor %}
-          {% endif %} -->
-          
-          <!-- {{ task_formset.as_p }} -->
-
           <!-- Tasks -->
           {% if task_formset %}
               <h3>Tasks</h3>
